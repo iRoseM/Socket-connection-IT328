@@ -78,26 +78,44 @@ public void run() {
     public String getUsername() {
         return username;
     }
-
+    private void broadcast(String message) {
+        for (ClientHandler client : clients) {
+            client.sendMessage(message);
+        }
+    }
     private void disconnectClient() {
-        try {
-            if (!clientSocket.isClosed()) {
-                clientSocket.close();
-            }
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    try {
+        synchronized (clients) {
+            clients.remove(this);
+            broadcast(username + " has left the game.");
+            playerList();
         }
 
         synchronized (Server.playingClients) {
-            Server.playingClients.remove(username);
-            Server.playerScores.remove(username);
-            Server.broadcastConnectedPlayers();
+            if (Server.playingClients.contains(username)) {
+                Server.playingClients.remove(username);
+                Server.broadcastPlayingPlayers();
+            }
         }
 
-        synchronized (clients) {
-            clients.remove(this);
+        // Inform the user
+        sendMessage("DISCONNECTED:You have been disconnected.");
+
+        System.out.println(username + " disconnected.");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    private void playerList() {
+        StringBuilder sb = new StringBuilder();
+        for (ClientHandler client : clients) {
+            sb.append(client.username).append(",");
         }
+
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1); // Remove trailing comma
+        }
+
+        broadcast("Connected users: " + sb.toString());
     }
 }

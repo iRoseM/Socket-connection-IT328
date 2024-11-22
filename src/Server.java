@@ -107,17 +107,38 @@ public class Server {
     
     // بث قائمة اللاعبين المتصلين
     public static synchronized void broadcastConnectedPlayers() {
-        StringBuilder playersMessage = new StringBuilder("PLAYERS:");
+        StringBuilder connectedPlayers = new StringBuilder("Connected users: ");
         for (ClientHandler client : clients) {
-            playersMessage.append(client.getUsername()).append(",");
+            connectedPlayers.append(client.getUsername()).append(",");
         }
-        if (playersMessage.length() > 8) {
-            playersMessage.setLength(playersMessage.length() - 1);
+
+        if (connectedPlayers.length() > 0) {
+            connectedPlayers.setLength(connectedPlayers.length() - 1);  // Remove trailing comma
         }
+
+        // Broadcast to all clients
         for (ClientHandler client : clients) {
-            client.sendMessage(playersMessage.toString());
+            client.sendMessage(connectedPlayers.toString());
         }
+        
     }
+    
+    public static synchronized void broadcastPlayingPlayers() {
+    StringBuilder playingList = new StringBuilder("PLAYING:");
+    for (String player : playingClients) {
+        playingList.append(player).append(",");
+    }
+
+    // Remove the trailing comma if there are players
+    if (playingList.length() > 8) {  // "PLAYING:" has length 8
+        playingList.setLength(playingList.length() - 1);
+    }
+
+    // Broadcast the message to all connected clients
+    for (ClientHandler client : clients) {
+        client.sendMessage(playingList.toString());
+    }
+    }   
 
     // هذه الدالة يجب استدعاؤها عند انتهاء الأسئلة أو عند تجاوز الفهرس
 public static synchronized void endGame() {

@@ -63,7 +63,7 @@ public void displayGameOver(String message) {
 }
 
 
-         public Client(Socket socket, BufferedReader in, PrintWriter out, String playername) {
+        public Client(Socket socket, BufferedReader in, PrintWriter out, String playername) {
         this.socket = socket;
         this.in = in;
         this.out = out;
@@ -243,21 +243,8 @@ public void displayGameOver(String message) {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
     
-    try {
-        // Notify server of disconnection
-        out.println("DISCONNECT");
-        
-        // Close client resources
-        in.close();
-        out.close();
-        socket.close();
-        
-        
-        JOptionPane.showMessageDialog(this, "Disconnected from server.");
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error while disconnecting!");
-        e.printStackTrace();
-    }
+    out.println("DISCONNECT");
+    this.dispose();
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -294,18 +281,20 @@ public void displayGameOver(String message) {
             } });
         
     }
-    public void updateConnectedPlayers(String playername) {
-        System.out.println("Updating Clients names: "+ playername);
-        jTextArea3.setText(playername);  // Display each name on a new line
-    }
+ public void updateConnectedPlayers(String playerNames) {
+    SwingUtilities.invokeLater(() -> {
+        // Assuming playerNames is a comma-separated string of names
+        String formattedNames = playerNames.replace(",", "\n");
+        jTextArea3.setText(formattedNames);  // Display each name on a new line
+    });
+}
     
 
     public void updatePlayingClients(String playingClients) {
-    System.out.println(playingClients + " are playing");
     SwingUtilities.invokeLater(() -> {
-        jTextArea4.setText("Players currently in the game: " + playingClients);
+        String message = "Players currently in the game: \n" + playingClients.replace(",", "\n");
+        jTextArea4.setText(message); // Display each playing client on a new line
     });
-    
 }
     public void startGame(String players) {
     JOptionPane.showMessageDialog(this, "The game is starting with players: " + players);

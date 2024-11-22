@@ -22,6 +22,13 @@ public void run() {
         String serverResponse;
         while ((serverResponse = in.readLine()) != null) {
             System.out.println("Received from server: " + serverResponse);
+            if (serverResponse.startsWith("Connected users: ")) {
+                    clientFrame.updateConnectedPlayers(serverResponse.substring(17));
+            }
+                // Handling currently playing clients update
+            if (serverResponse.startsWith("PLAYING:")) {
+                clientFrame.updatePlayingClients(serverResponse.substring(8));
+            }
             if (serverResponse.startsWith("SCORES:")) {
                 clientFrame.updateScores(serverResponse.substring(7));
             } else if (serverResponse.startsWith("QUESTION:")) {
@@ -37,14 +44,7 @@ public void run() {
     } catch (IOException e) {
         e.printStackTrace();
     } finally {
-        try {
-            in.close();
-            out.close();
-          
-         
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
 }}
