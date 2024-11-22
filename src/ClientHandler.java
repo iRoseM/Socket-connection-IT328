@@ -20,7 +20,7 @@ public class ClientHandler implements Runnable {
 
 @Override
 public void run() {
-    try {
+try {
         String message;
         while ((message = in.readLine()) != null) {
             if (message.startsWith("PLAY:")) {
@@ -39,25 +39,27 @@ public void run() {
             } else if (message.startsWith("ANSWER:")) {
                 String playerAnswer = message.substring(7).trim();
                 synchronized (Server.class) {
-                    // التحقق من صحة الفهرس قبل معالجة الإجابة
+                    // Verify the current question index is valid
                     if (Server.currentQuestionIndex < Server.questions.length) {
                         if (playerAnswer.equalsIgnoreCase(Server.answers[Server.currentQuestionIndex])) {
                             int currentScore = Server.playerScores.getOrDefault(username, 0);
                             Server.playerScores.put(username, currentScore + 10);
-                            Server.broadcastScores();
-                            Server.currentQuestionIndex++;
-
-                            // التحقق إذا كانت هناك أسئلة متبقية
-                            if (Server.currentQuestionIndex < Server.questions.length) {
-                                Server.broadcastQuestion();
-                            } else {
-                                Server.endGame();
-                            }
+                            out.println("CORRECT_ANSWER");
                         } else {
                             out.println("WRONG_ANSWER");
                         }
+
+                        // Update scores and proceed to the next question
+                        Server.broadcastScores();
+                        Server.currentQuestionIndex++;
+
+                        if (Server.currentQuestionIndex < Server.questions.length) {
+                            Server.broadcastQuestion();
+                        } else {
+                            Server.endGame();
+                        }
                     } else {
-                        Server.endGame(); // إنهاء اللعبة إذا انتهت الأسئلة
+                        Server.endGame(); // End the game if all questions are answered
                         break;
                     }
                 }
@@ -75,8 +77,12 @@ public void run() {
         out.println(message);
     }
 
-    public String getUsername() {
+        public String getUsername() {
         return username;
+    }
+
+        public void setUsername(String username) {
+        this.username = username;
     }
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
@@ -95,12 +101,25 @@ public void run() {
             if (Server.playingClients.contains(username)) {
                 Server.playingClients.remove(username);
                 Server.broadcastPlayingPlayers();
+
+                // Check if only one player remains in the playing room
+                if (Server.playingClients.size() == 1) {
+                    String remainingPlayer = Server.playingClients.get(0); // Get the only remaining player
+                    Server.playingClients.remove(remainingPlayer); // Remove them from the playing room
+                    Server.broadcastPlayingPlayers(); // Update playing players list
+
+                    // Notify the remaining player
+                    for (ClientHandler client : Server.clients) {
+                        if (client.getUsername().equals(remainingPlayer)) {
+                            client.sendMessage("KICKED:You cannot play alone. Please wait for others to join.");
+                        }
+                    }
+                }
             }
         }
 
-        // Inform the user
+        // Inform the disconnected client
         sendMessage("DISCONNECTED:You have been disconnected.");
-
         System.out.println(username + " disconnected.");
     } catch (Exception e) {
         e.printStackTrace();

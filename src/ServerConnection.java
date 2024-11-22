@@ -31,7 +31,11 @@ public void run() {
             }
             if (serverResponse.startsWith("SCORES:")) {
                 clientFrame.updateScores(serverResponse.substring(7));
-            } else if (serverResponse.startsWith("QUESTION:")) {
+            }if (serverResponse.equals("ROOM_FULL")) {
+                clientFrame.displayRoomFullMessage();
+            }
+            
+            else if (serverResponse.startsWith("QUESTION:")) {
                 clientFrame.displayQuestion(serverResponse.substring(9));
             } else if (serverResponse.startsWith("GAME_OVER:")) {
                 clientFrame.displayGameOver(serverResponse.substring(10));
@@ -40,6 +44,7 @@ public void run() {
             } else if (serverResponse.equals("WRONG_ANSWER")) {
                 clientFrame.showWrongAnswer();
             }
+            
         }
     } catch (IOException e) {
         e.printStackTrace();

@@ -128,7 +128,7 @@ public void displayGameOver(String message) {
         jTextArea1.setBackground(new java.awt.Color(237, 235, 250));
         jTextArea1.setColumns(20);
         jTextArea1.setFont(new java.awt.Font("Showcard Gothic", 1, 18)); // NOI18N
-        jTextArea1.setForeground(new java.awt.Color(51, 0, 0));
+        jTextArea1.setForeground(new java.awt.Color(255, 153, 0));
         jTextArea1.setRows(5);
         jTextArea1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Game Space", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("Showcard Gothic", 3, 24), new java.awt.Color(214, 78, 129))); // NOI18N
         jTextArea1.setDisabledTextColor(new java.awt.Color(92, 57, 140));
@@ -151,6 +151,7 @@ public void displayGameOver(String message) {
         jTextArea4.setBackground(new java.awt.Color(237, 235, 250));
         jTextArea4.setColumns(20);
         jTextArea4.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jTextArea4.setForeground(new java.awt.Color(214, 78, 129));
         jTextArea4.setRows(5);
         jTextArea4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Waitign List", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("Showcard Gothic", 2, 24), new java.awt.Color(214, 78, 129))); // NOI18N
         jTextArea4.setDisabledTextColor(new java.awt.Color(92, 57, 140));
@@ -186,6 +187,7 @@ public void displayGameOver(String message) {
         jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 460, 274, 31));
 
         choice1.setBackground(new java.awt.Color(237, 235, 250));
+        choice1.setForeground(new java.awt.Color(214, 78, 129));
         jPanel2.add(choice1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 460, 284, 31));
 
         jButton3.setBackground(new java.awt.Color(123, 98, 187));
@@ -300,8 +302,15 @@ public void displayGameOver(String message) {
     JOptionPane.showMessageDialog(this, "The game is starting with players: " + players);
     // Update the game state on the client-side (e.g., switch to game mode or enable game UI components)
 }
-public void displayRoomFullMessage() {
+    public void displayRoomFullMessage() {
     JOptionPane.showMessageDialog(this, "The room is full. Please wait for the next round.", "Room Full", JOptionPane.WARNING_MESSAGE);
+}
+    public void displaykickedMessage() throws Exception {
+    JOptionPane.showMessageDialog(this, "All players left the game you cant play solo.", "Solo", JOptionPane.WARNING_MESSAGE);
+    this.dispose();
+    start s= new start();
+    s.setVisible(true);
+    
 }
 
 

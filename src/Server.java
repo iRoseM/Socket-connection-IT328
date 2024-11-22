@@ -92,7 +92,7 @@ public class Server {
     public static synchronized void broadcastScores() {
         StringBuilder scoresMessage = new StringBuilder("SCORES:");
         for (String player : playingClients) {
-            scoresMessage.append(player).append("=").append(playerScores.getOrDefault(player, 0)).append("\n");
+            scoresMessage.append(player).append("=").append(playerScores.getOrDefault(player, 0)).append(",");
         }
         if (scoresMessage.length() > 7) { // إزالة الفاصلة الأخيرة
             scoresMessage.setLength(scoresMessage.length() - 1);
@@ -103,26 +103,25 @@ public class Server {
             }
         }
     }
-
     // إنهاء اللعبة وعرض قائمة الفائزين أو رسالة "لا يوجد فائز"
     
     // بث قائمة اللاعبين المتصلين
     public static synchronized void broadcastConnectedPlayers() {
-        StringBuilder connectedPlayers = new StringBuilder("Connected users: ");
-        for (ClientHandler client : clients) {
+    StringBuilder connectedPlayers = new StringBuilder("Connected users: ");
+    for (ClientHandler client : clients) {
+        if (client.getUsername() != null) { // Check to avoid null usernames
             connectedPlayers.append(client.getUsername()).append(",");
         }
-
-        if (connectedPlayers.length() > 0) {
-            connectedPlayers.setLength(connectedPlayers.length() - 1);  // Remove trailing comma
-        }
-
-        // Broadcast to all clients
-        for (ClientHandler client : clients) {
-            client.sendMessage(connectedPlayers.toString());
-        }
-        
     }
+
+    if (connectedPlayers.length() > 0) {
+        connectedPlayers.setLength(connectedPlayers.length() - 1);  // Remove trailing comma
+    }
+
+    for (ClientHandler client : clients) {
+        client.sendMessage(connectedPlayers.toString());
+    }
+}
     
     public static synchronized void broadcastPlayingPlayers() {
     StringBuilder playingList = new StringBuilder("PLAYING:");
@@ -130,16 +129,14 @@ public class Server {
         playingList.append(player).append(",");
     }
 
-    // Remove the trailing comma if there are players
     if (playingList.length() > 8) {  // "PLAYING:" has length 8
-        playingList.setLength(playingList.length() - 1);
+        playingList.setLength(playingList.length() - 1);  // Remove trailing comma
     }
 
-    // Broadcast the message to all connected clients
     for (ClientHandler client : clients) {
         client.sendMessage(playingList.toString());
     }
-    }   
+}  
 
     // هذه الدالة يجب استدعاؤها عند انتهاء الأسئلة أو عند تجاوز الفهرس
 public static synchronized void endGame() {
