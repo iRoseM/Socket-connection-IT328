@@ -30,6 +30,7 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clients);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
+                broadcastConnectedPlayers();
             }
         } catch (IOException e) {
             e.printStackTrace();
